@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IQ Тест</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .question { margin: 20px; display: none; }
+        .result { font-size: 24px; font-weight: bold; margin-top: 20px; }
+        #start-button, #restart-button { font-size: 18px; padding: 10px 20px; }
+    </style>
+</head>
+<body>
+    <h1>Пройди тест на IQ</h1>
+    <button id="start-button" onclick="startTest()">Начать</button>
+    <div id="quiz"></div>
+    <button id="result-button" onclick="calculateIQ()" style="display:none;">Показать результат</button>
+    <p class="result" id="result"></p>
+    <button id="restart-button" onclick="restartTest()" style="display:none;">Начать заново</button>
+
+    <script>
+        let questionsData = [
+            { question: "Что лишнее: Кошка, Собака, Лиса, Рыба?", answers: ["Кошка", "Рыба", "Лиса"], correct: 2 },
+            { question: "Какое число пропущено в ряду? 2, 6, 12, 20, 30, ?", answers: ["40", "42", "44"], correct: 2 },
+            { question: "Если ВСАДНИК = 8134529, то ПЕСОК = ?", answers: ["97865", "54321", "87654"], correct: 1 },
+            { question: "Какой день недели будет через 100 дней, если сегодня понедельник?", answers: ["Вторник", "Понедельник", "Среда"], correct: 3 },
+            { question: "Найдите закономерность: 3, 5, 9, 17, 33, ?", answers: ["65", "70", "75"], correct: 1 },
+            { question: "Сколько будет 111 × 111?", answers: ["12121", "11111", "12321"], correct: 3 },
+            { question: "Антоним слова 'ДЕРЗКИЙ'?", answers: ["Скромный", "Храбрый", "Грубый"], correct: 1 },
+            { question: "Какое число лишнее: 2, 4, 6, 8, 9, 10?", answers: ["2", "4", "9"], correct: 3 },
+            { question: "Найдите следующую букву в последовательности: А, В, Г, Д, ...?", answers: ["Е", "Ж", "З"], correct: 1 },
+            { question: "Сколько сторон у шестиугольника?", answers: ["4", "5", "6"], correct: 3 },
+            { question: "Сколько месяцев в году имеют 28 дней?", answers: ["1", "12", "6"], correct: 2 },
+            { question: "Какой металл самый лёгкий?", answers: ["Алюминий", "Литий", "Серебро"], correct: 2 },
+            { question: "Сколько градусов в прямом угле?", answers: ["90", "180", "45"], correct: 1 },
+            { question: "Какой газ необходим человеку для дыхания?", answers: ["Азот", "Кислород", "Углекислый газ"], correct: 2 },
+            { question: "Какое число идёт после 999?", answers: ["1000", "1001", "9999"], correct: 1 },
+            { question: "Сколько ног у паука?", answers: ["6", "8", "10"], correct: 2 },
+            { question: "Какое самое большое животное на Земле?", answers: ["Слон", "Синий кит", "Жираф"], correct: 2 },
+            { question: "Сколько континентов на Земле?", answers: ["5", "6", "7"], correct: 3 },
+            { question: "Какое самое твёрдое природное вещество?", answers: ["Железо", "Алмаз", "Гранит"], correct: 2 }
+        ];
+
+        let selectedQuestions = [];
+        let score = 0;
+        let correctAnswers = 0;
+        let currentQuestion = 0;
+
+        function shuffle(array) {
+            return array.sort(() => Math.random() - 0.5);
+        }
+
+        function startTest() {
+            document.getElementById('start-button').style.display = 'none';
+            document.getElementById('result').innerText = '';
+            document.getElementById('restart-button').style.display = 'none';
+            document.getElementById('result-button').style.display = 'none';
+            document.getElementById('quiz').innerHTML = "";
+
+            selectedQuestions = shuffle([...questionsData]).slice(0, 20);
+            score = 0;
+            correctAnswers = 0;
+            currentQuestion = 0;
+
+            selectedQuestions.forEach((q, index) => {
+                let questionDiv = document.createElement('div');
+                questionDiv.classList.add('question');
+                questionDiv.dataset.index = index;
+                questionDiv.innerHTML = `<p>${q.question}</p>` + q.answers.map((ans, i) => 
+                    `<button onclick="checkAnswer(${index}, ${i + 1})">${ans}</button>`).join(" ");
+                document.getElementById('quiz').appendChild(questionDiv);
+            });
+            document.querySelectorAll('.question')[0].style.display = 'block';
+        }
+
+        function checkAnswer(index, answer) {
+            if (selectedQuestions[index].correct === answer) {
+                score += 0.5;;
+                correctAnswers += 1;
+            }
+            document.querySelector(`.question[data-index='${index}']`).style.display = 'none';
+            let nextQuestion = document.querySelector(`.question[data-index='${index + 1}']`);
+            if (nextQuestion) {
+                nextQuestion.style.display = 'block';
+            } else {
+                document.getElementById('result-button').style.display = 'block';
+            }
+        }
+
+        function calculateIQ() {
+            let iq = 50 + (score * 1.5);
+            document.getElementById('result').innerText = `Ваш IQ: ${iq}\nПравильных ответов: ${correctAnswers} из 20`;
+            document.getElementById('result-button').style.display = 'none';
+            document.getElementById('restart-button').style.display = 'block';
+        }
+
+        function restartTest() {
+            startTest();
+        }
+    </script>
+</body>
+</html>
