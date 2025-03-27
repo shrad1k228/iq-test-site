@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Точный IQ тест</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a0ca3;
+            --secondary: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --success: #4cc9f0;
+            --border-radius: 12px;
+            --box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            background: white;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .menu {
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--primary-dark);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        h4 {
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        h3 {
+            color: var(--primary-dark);
+            margin: 25px 0 15px;
+            font-size: 1.3rem;
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: var(--gray);
+        }
+
+        .question {
+            margin: 30px auto;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Стили для прогресс-бара */
+        .progress-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            margin: 20px 0;
+            height: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 0.4s ease;
+            border-radius: 10px;
+        }
+
+        .progress-text {
+            text-align: right;
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-top: 5px;
+        }
+
+        .result-container {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 30px auto;
+            border: 2px solid var(--primary);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            background-color: rgba(67, 97, 238, 0.05);
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+        }
+
+        .fact-container {
+            margin: 30px auto;
+            padding: 20px;
+            background-color: var(--light);
+            border-radius: var(--border-radius);
+            border-left: 5px solid var(--primary);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .question-counter {
+            font-size: 1rem;
+            margin-bottom: 20px;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        .complex-question {
+            font-weight: 600;
+            margin-bottom: 25px;
+            font-size: 1.2rem;
+            color: var(--dark);
+        }
+
+        button {
+            font-size: 1rem;
+            padding: 12px 25px;
+            margin: 8px;
+            border: none;
+            border-radius: 50px;
+            background-color: var(--primary);
+            color: white;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            box-shadow: 0 4px 8px rgba(67, 97, 238, 0.3);
+        }
+
+        button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(67, 97, 238, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        #start-button {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            margin-top: 20px;
+        }
+
+        #menu-button, #result-button {
+            display: inline-block;
+            margin: 20px auto;
+        }
+
+        .matrix {
+            font-family: monospace;
+            white-space: pre;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: var(--light);
+            border-radius: var(--border-radius);
+            display: inline-block;
+        }
+
+        .star-image {
+            max-width: 100%;
+            height: auto;
+            margin: 25px auto;
+            display: block;
+            border-radius: var(--border-radius);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid #eee;
+            transition: var(--transition);
+        }
+
+        .star-image:hover {
+            transform: scale(1.02);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .info-section {
+            background: rgba(248, 249, 250, 0.7);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin: 25px 0;
+            border-left: 4px solid var(--primary);
+        }
+
+        .info-section p {
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 15px auto;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            button {
+                padding: 10px 20px;
+                margin: 5px;
+            }
+
+            #start-button {
+                padding: 12px 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="menu" id="main-menu">
+            <h1>Точный IQ тест</h1>
+            <h4>Продвинутый IQ Тест</h4>
+            <p>Настоящая проверка вашего интеллекта!</p>
+            <button id="start-button" onclick="startTest()">Начать тест</button>
+
+            <div class="info-section">
+                <h3>Почему нам нужно знать свой IQ?</h3>
+                <p>Когнитивные способности</p>
+                <p>Успех в учебе</p>
+                <p>Карьерные перспективы</p>
+                <p>Решение повседневных задач</p>
+            </div>
+
+            <div class="info-section">
+                <h3>Что такое IQ?</h3>
+                <p>IQ (ай-кью) — это показатель уровня интеллекта человека. Он показывает, насколько хорошо ты умеешь решать задачи, логически мыслить и запоминать информацию по сравнению с другими людьми.</p>
+                <p>Проще говоря, IQ — это как "измеритель умственных способностей", похожий на тест на скорость, но для мозга. Чем выше IQ, тем лучше человек справляется с умственными задачами. Однако IQ не измеряет креативность, эмоции или жизненную мудрость.</p>
+            </div>
+        </div>
+
+        <div id="quiz"></div>
+        <button id="result-button" onclick="calculateIQ()" style="display:none;">Показать результат</button>
+        <div class="result-container" id="result" style="display:none;"></div>
+        <div class="fact-container" id="fact" style="display:none;"></div>
+        <button id="menu-button" onclick="showMenu()" style="display:none;">В меню</button>
+
+        <footer>
+            <p>© 2023-2025 ELK.iq.test</p>
+        </footer>
+    </div>
+
+    <script>
+        let questionsData = [
+            { 
+                question: "Какое число продолжает последовательность: 2, 3, 5, 9, 17, ?", 
+                answers: ["25", "33", "29", "31"], 
+                correct: 2,
+                explanation: "Каждое число = предыдущее × 2 - 1 (3=2×2-1, 5=3×2-1, и т.д.)"
+            },
+            { 
+                question: "Если все Flips являются Flops, а все Flops являются Fleaps, то все Flips обязательно являются Fleaps?", 
+                answers: ["Да", "Нет", "Недостаточно данных"], 
+                correct: 1,
+                explanation: "Это классическая логическая цепочка: A⊂B⊂C ⇒ A⊂C"
+            },
+            { 
+                question: "Какое слово лишнее: Апельсин, Гитара, Телескоп, Банан?", 
+                answers: ["Апельсин", "Гитара", "Телескоп", "Банан"], 
+                correct: 2,
+                explanation: "Телескоп - единственное слово не связанное с музыкой или фруктами"
+            },
+            { 
+                question: "Решите: (7 × 9) + (15 ÷ 3) - (2^4) = ?", 
+                answers: ["52", "58", "60", "62"], 
+                correct: 4,
+                explanation: "63 + 5 - 16 = 52"
+            },
+            { 
+                question: "Какая фигура следующая в последовательности: ◻, ◯, ◻, ◯, ◻, ?", 
+                answers: ["◯", "◻", "△", "◇"], 
+                correct: 1,
+                explanation: "Чередование квадрата и круга"
+            },
+            { 
+                question: "Если вращать эту фигуру ↻ на 135° по часовой стрелке, как она будет выглядеть?", 
+                answers: ["↘", "↙", "↖", "↗"], 
+                correct: 4,
+                explanation: "Каждые 45° - новое положение, 135° = 3 позиции по часовой стрелке"
+            },
+            { 
+                question: "Какое число заменяет знак вопроса: 3, 7, 16, 35, ?, 151", 
+                answers: ["65", "74", "82", "93"], 
+                correct: 2,
+                explanation: "Формула: n×2 + (n-1), где n - предыдущее число"
+            },
+            { 
+                question: "Расшифруйте анаграмму: ТРАКСИВАНИЕТЕ", 
+                answers: ["Экстравагантность", "Интерактивность", "Трансактивность", "Креативность"], 
+                correct: 1,
+                explanation: "Правильный ответ - 'Экстравагантность'"
+            },
+            { 
+                question: "Если 12 марта - пятница, то какой день недели будет 12 мая того же года?", 
+                answers: ["Вторник", "Среда", "Четверг", "Пятница"], 
+                correct: 3,
+                explanation: "От 12 марта до 12 мая - 61 день (8 недель и 5 дней)"
+            },
+            { 
+                question: "Какое слово противоположно по смыслу: ЭФЕМЕРНЫЙ", 
+                answers: ["Минимальный", "Постоянный", "Скрытый", "Яркий"], 
+                correct: 2,
+                explanation: "Эфемерный - временный, недолговечный"
+            },
+            { 
+                question: "Решите уравнение: x² - 5x + 6 = 0", 
+                answers: ["2 и 4", "1 и 5", "2 и 3", "-2 и -3"], 
+                correct: 3,
+                explanation: "x² - 5x + 6 = (x-2)(x-3) = 0 ⇒ x=2 или x=3"
+            },
+            { 
+                question: "Какая буква следующая: A, E, F, H, I, K, L, M, ?", 
+                answers: ["N", "O", "P", "Q"], 
+                correct: 1,
+                explanation: "Буквы, состоящие только из вертикальных и горизонтальных линий"
+            },
+            { 
+                question: "Если 5 машин за 5 минут производят 5 деталей, сколько времени потребуется 100 машинам для производства 100 деталей?", 
+                answers: ["5 минут", "20 минут", "100 минут", "50 минут"], 
+                correct: 1,
+                explanation: "1 машина делает 1 деталь за 5 минут"
+            },
+            { 
+                question: "Какое число должно быть вместо знака вопроса?<br>8, 5, 4, 9, 1, 7, 6, 3, 2, ?", 
+                answers: ["0", "4", "7", "9"], 
+                correct: 1,
+                explanation: "Цифры в алфавитном порядке (восемь, пять, четыре...)"
+            },
+            { 
+                question: "Какое число должно стоять вместо знака вопроса в ряду: 3, 6, 11, 18, 27, ?",
+                answers: ["36", "37", "38", "39"], 
+                correct: 3,
+                explanation: "Требуется пространственное воображение для анализа развертки"
+            },
+            { 
+                question: "Какое число продолжает ряд: 1, 4, 9, 61, 52, 63, 94, ?", 
+                answers: ["46", "56", "66", "76"], 
+                correct: 12,
+                explanation: "Разница между числами образует последовательность:"
+            },
+            { 
+                question: "Если 3★7 = 27, 5★2 = 17, 4★8 = 32, то 6★5 = ?", 
+                answers: ["30", "35", "41", "45"], 
+                correct: 3,
+                explanation: "a★b = a² + b → 6★5 = 36 + 5 = 41"
+            },
+            { 
+                question: "Какое слово скрыто в последовательности: Т, О, Т, Ч, П, Т, С, В, Д?", 
+                answers: ["Дни недели", "Планеты", "Цвета радуги", "Ноты"], 
+                correct: 1,
+                explanation: "Начальные буквы дней недели: понедельник, вторник и т.д."
+            },
+            { 
+                question: "Разгадайте матрицу:\n1 2 3\n4 5 6\n7 8 ?", 
+                answers: ["9", "10", "0", "11"], 
+                correct: 1,
+                explanation: "Классическая последовательность чисел 1-9"
+            },
+            { 
+                question: "Если XLV + XXIV = LXIX, то DC - XL = ?", 
+                answers: ["DLX", "DCL", "DCC", "DCX"], 
+                correct: 1,
+                explanation: "Римские цифры: 45 + 24 = 69, 600 - 40 = 560 (DLX)"
+            },
+            { 
+                question: "какой ответ правильный?", 
+                answers: ["A", "Б", "В", "Г" ,"Д"], 
+                correct: 4,
+                explanation: "квалратный узор 3 на 3",
+                hasImage: true,
+                imageUrl: "https://m.treningmozga.com/tasks/pics/logk0002.jpg",
+                imageAlt: "квадрат 3 на 3"
+
+            },
+            { 
+                question: "Сколько треугольников на изображении пятиконечной звезды?",
+                answers: ["5", "8", "10", "12"], 
+                correct: 3,
+                explanation: "5 маленьких, 5 больших, итого 10 треугольников",
+                hasImage: true,
+                imageUrl: "https://math.all-tests.ru/sites/math.all-tests.ru/files/images/300-problem.png",
+                imageAlt: "Пятиконечная звезда с пересекающимися линиями"
+            },
+            { 
+                question: "Если 3@5=16, 7@2=45, 5@4=21, то 6@3=?", 
+                answers: ["18", "24", "27", "36"], 
+                correct: 3,
+                explanation: "a@b = (a+b)×(a-b) → (6+3)×(6-3)=9×3=27"
+            },
+            { 
+                question: "Какое число следующее: 1, 11, 21, 1211, 111221, ?", 
+                answers: ["312211", "13112221", "132231", "223113"], 
+                correct: 1,
+                explanation: "Последовательность 'скажи, что видишь': 1, одна 1, две 1, одна 2 одна 1 и т.д."
+            },
+            { 
+                question: "Если A=1, B=2, ..., Z=26, то сумма букв какого слова равна 100?", 
+                answers: ["ДИФФЕРЕНЦИАЛ", "ИНТЕГРАЛ", "МАТЕМАТИКА", "ЛОГАРИФМ"], 
+                correct: 2,
+                explanation: "Сумма позиций букв в слове 'ИНТЕГРАЛ' равна 100"
+            }
+        ];
+
+        const iqFacts = [
+            { range: [0, 69], fact: "Это ниже среднего. Средний IQ составляет 100 баллов. Но помните, что тесты IQ измеряют только определенные виды интеллекта!" },
+            { range: [70, 89], fact: "Это немного ниже среднего. Альберт Эйнштейн однажды сказал: 'Все мы гении. Но если вы будете судить рыбу по её способности лазить по деревьям, она проживёт всю жизнь, считая себя дурой'." },
+            { range: [90, 109], fact: "Средний результат! Большинство людей (около 50%) имеют IQ в этом диапазоне. Интересно, что средний IQ лауреатов Нобелевской премии составляет около 145." },
+            { range: [110, 129], fact: "Выше среднего! Знаете ли вы, что IQ Билла Гейтса оценивается в 160, а Стивена Хокинга - в 160-165?" },
+            { range: [130, 144], fact: "Высокий результат! Вы входите в 2% самых умных людей. Любопытно, что самый высокий зарегистрированный IQ принадлежит математику Теренсу Тао с результатом 225-230." },
+            { range: [145, 159], fact: "Очень высокий IQ! Вы входите в 0.1% самых умных людей. Интересный факт: Мэрилин вос Савант, женщина с самым высоким зарегистрированным IQ (228), ведет колонку в журнале Parade." },
+            { range: [160, 179], fact: "Гениальный уровень! Вы входите в 0.003% населения. Знаете ли вы, что Ким Ун Ён, вундеркинд из Кореи, в 4 года уже говорил на 4 языках и решал сложные математические задачи?" },
+            { range: [180, 200], fact: "Исключительный результат! Вы входите в 0.0001% самых умных людей на планете. Интересно, что IQ не остается постоянным в течение жизни и может меняться на 20 пунктов и более!" },
+            { range: [201, 300], fact: "Феноменальный результат! Если это не ошибка теста, то вы, вероятно, гений уровня Леонардо да Винчи или Исаака Ньютона. Кстати, тесты IQ не измеряют креативность, эмоциональный интеллект и многие другие важные способности." }
+        ];
+
+        let selectedQuestions = [];
+        let score = 0;
+        let correctAnswers = 0;
+        let currentQuestion = 0;
+
+        function checkAnswer(questionIndex, answer) {
+            if (selectedQuestions[questionIndex].correct === answer) {
+                correctAnswers++;
+            }
+
+            document.querySelectorAll('.question')[questionIndex].style.display = 'none';
+            if (questionIndex < selectedQuestions.length - 1) {
+                document.querySelectorAll('.question')[questionIndex + 1].style.display = 'block';
+                updateProgressBar(questionIndex + 1); // Обновляем прогресс-бар
+            } else {
+                document.getElementById('result-button').style.display = 'block';
+            }
+        }
+
+        function updateProgressBar(currentQuestionIndex) {
+            const progressPercentage = ((currentQuestionIndex + 1) / selectedQuestions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progressPercentage}%`;
+            document.getElementById('progress-text').textContent = `${currentQuestionIndex + 1}/${selectedQuestions.length}`;
+        }
+
+        function calculateIQ() {
+            let iq = Math.floor((correctAnswers / selectedQuestions.length) * 200) + 10;
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('result').innerHTML = `<p>Правильных ответов: ${correctAnswers} из ${selectedQuestions.length}</p><p>Ваш IQ: ${iq}</p>`;
+
+            let fact = iqFacts.find(f => iq >= f.range[0] && iq <= f.range[1]).fact;
+            document.getElementById('fact').style.display = 'block';
+            document.getElementById('fact').innerHTML = `<p><strong>Интересный факт:</strong> ${fact}</p>`;
+
+            document.getElementById('menu-button').style.display = 'block';
+            document.getElementById('result-button').style.display = 'none';
+        }
+
+        function showMenu() {
+            document.getElementById('main-menu').style.display = 'block';
+            document.getElementById('quiz').innerHTML = "";
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('fact').style.display = 'none';
+            document.getElementById('menu-button').style.display = 'none';
+        }
+
+        function shuffle(array) {
+            return array.sort(() => Math.random() - 0.5);
+        }
+
+        function startTest() {
+            document.getElementById('main-menu').style.display = 'none';
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('fact').style.display = 'none';
+            document.getElementById('menu-button').style.display = 'none';
+            document.getElementById('result-button').style.display = 'none';
+            document.getElementById('quiz').innerHTML = "";
+
+            selectedQuestions = shuffle([...questionsData]).slice(0, 25);
+            score = 0;
+            correctAnswers = 0;
+            currentQuestion = 0;
+
+            // Добавляем прогресс-бар в начало теста
+            const progressHTML = `
+                <div class="progress-container">
+                    <div id="progress-bar" class="progress-bar"></div>
+                </div>
+                <div id="progress-text" class="progress-text">0/${selectedQuestions.length}</div>
+            `;
+            document.getElementById('quiz').innerHTML = progressHTML;
+
+            selectedQuestions.forEach((q, index) => {
+                let questionDiv = document.createElement('div');
+                questionDiv.classList.add('question');
+                questionDiv.dataset.index = index;
+
+                let questionContent = `
+                    <p class='question-counter'>Вопрос ${index + 1} из ${selectedQuestions.length}</p>
+                    <p class='complex-question'>${q.question}</p>
+                `;
+
+                if (q.hasImage) {
+                    questionContent += `
+                        <img class="star-image" src="${q.imageUrl}" alt="${q.imageAlt}">
+                    `;
+                }
+
+                if (q.question.includes("матрицу")) {
+                    questionContent += `<div class='matrix'>${q.question.split('\n')[1]}</div>`;
+                }
+
+                questionContent += q.answers.map((ans, i) => 
+                    `<button onclick="checkAnswer(${index}, ${i + 1})">${ans}</button>`
+                ).join(" ");
+
+                questionDiv.innerHTML = questionContent;
+                document.getElementById('quiz').appendChild(questionDiv);
+            });
+
+            document.querySelectorAll('.question')[0].style.display = 'block';
+            updateProgressBar(0); // Инициализируем прогресс-бар
+        }
+    </script>
+</body>
+</html>
